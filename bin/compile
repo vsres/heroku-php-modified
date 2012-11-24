@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+# fail fast
+set -e
+
+# config
+APACHE_VERSION="2.2.23"
+APACHE_PATH="apache"
+APACHE_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/apache-$APACHE_VERSION.tar.gz"
+#APACHE_URL="https://s3.amazonaws.com/rbrainard-public/apache-$APACHE_VERSION.tar.gz"
+#APACHE_URL="https://dl.dropbox.com/u/13311057/apache.tar.gz"
+#APACHE_URL="http://dl.dropbox.com/u/62064441/apache.tar.gz"
+
+
+PHP_VERSION="5.3.19"
+PHP_PATH="php"
+PHP_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/php-$PHP_VERSION.tar.gz"
+#PHP_URL="https://s3.amazonaws.com/rbrainard-public/php-$PHP_VERSION.tar.gz"
+#PHP_URL="https://dl.dropbox.com/u/13311057/php-$PHP_VERSION.tar.gz"
+#PHP_URL="http://dl.dropbox.com/u/62064441/php.tar.gz"
+
+PEAR_VERSION=""
+PEAR_PATH="pear"
+PEAR_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/pear-$PEAR_VERSION.tar.gz"
+
+LIBMCRYPT_VERSION=""
+LIBMCRYPT_PATH="libmcrypt"
+LIBMCRYPT_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/libmcrypt-$LIBMCRYPT_VERSION.tar.gz"
+
+SOURCE_PATH='www'
+
+BIN_DIR=$(dirname $0)
+BUILD_DIR=$1
+CACHE_DIR=$2
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
+
+# include .files when moving things around
+shopt -s dotglob
+
+cd $BUILD_DIR
+
+# move app things to www
+mkdir -p $CACHE_DIR/$SOURCE_PATH
+mv * $CACHE_DIR/$SOURCE_PATH
+mv $CACHE_DIR/$SOURCE_PATH .
+
+# keep Procfile
+if [ -f $SOURCE_PATH/Procfile ]; then
+  mv $SOURCE_PATH/Procfile .
+fi
+
+echo "-----> Bundling Apache version $APACHE_VERSION GC AWS S3"
+curl --silent --max-time 60 --location "$APACHE_URL" | tar xz
+
+echo "-----> Bundling PHP version $PHP_VERSION from GC AWS S3"
+curl --silent --max-time 60 --location "$PHP_URL" | tar xz
+
+echo "-----> Bundling libmcrypt from GC AWS S3"
+curl --silent --max-time 60 --location "$LIBMCRYPT_URL" | tar xz
+
+echo "-----> Bundling pear from GC AWS S3"
+curl --silent --max-time 60 --location "$PEAR_URL" | tar xz
+
+# update config files
+cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
+cp $LP_DIR/conf/php.ini $PHP_PATH
+
+# If the application has provided a php.ini file - use it over the default buildpack version
+if [ -f $SOURCE_PATH/php.ini ]; then
+  mv $SOURCE_PATH/php.ini $PHP_PATH
+fi
+
+# Allow users to provide custom http.conf files located httpd.conf.d/*.conf
+if [ -d $SOURCE_PATH/httpd.conf.d ]; then
+  mv $SOURCE_PATH/httpd.conf.d $APACHE_PATH/conf/app.conf.d
+else
+  mkdir $APACHE_PATH/conf/app.conf.d
+fi
+
+# make php available on bin
+mkdir -p bin
+ln -s /app/php/bin/php bin/php
+
+#if [ -f www/composer.json ] && [ ! -d www/vendor ]; then
+#    GIT_DIR_ORIG=$GIT_DIR
+#    unset GIT_DIR
+#    echo "-----> Bundling Composer"
+#    COMPOSER_URL="http://getcomposer.org/composer.phar"
+#    curl --silent --max-time 60 --location "$COMPOSER_URL" > www/composer.phar
+#    cd www
+#    echo "-----> Installing dependencies"
+#    LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php composer.phar install
+#    cd $BUILD_DIR
+#    rm www/composer.phar
+#    export GIT_DIR=$GIT_DIR_ORIG
+#fi
+
+cat >>boot.sh <<EOF
+for var in \`env|cut -f1 -d=\`; do
+  echo "PassEnv \$var" >> /app/apache/conf/httpd.conf;
+done
+touch /app/apache/logs/error_log
+touch /app/apache/logs/access_log
+tail -F /app/apache/logs/error_log &
+tail -F /app/apache/logs/access_log &
+export LD_LIBRARY_PATH=/app/php/ext
+export PHP_COMMAND=/app/php/bin/php
+export PHP_INI_SCAN_DIR=/app/www
+export PATH=$PATH:/app/php/bin:/app/apache/bin:/app/pear/bin
+echo "Launching Apache"
+exec /app/apache/bin/httpd -DNO_DETACH
+EOF
+
+chmod +x boot.sh
+
+# clean the cache
+rm -rf $CACHE_DIR/*

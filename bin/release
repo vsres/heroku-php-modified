@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# bin/release <build-dir>
+
+cat <<EOF
+---
+config_vars:
+  APP_LOG_FILE: /app/target/app.log
+  LD_LIBRARY_PATH: /app/php/ext
+  PATH: /app/php/bin:/usr/local/bin:/usr/bin:/bin:/app/apache/bin:/app/pear/bin
+default_process_types:
+  web: sh boot.sh
+EOF
