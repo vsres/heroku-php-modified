@@ -22,11 +22,11 @@ PHP_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/php-$PHP_VER
 
 PEAR_VERSION=""
 PEAR_PATH="pear"
-PEAR_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/pear-$PEAR_VERSION.tar.gz"
+PEAR_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/pear.tar.gz"
 
 LIBMCRYPT_VERSION=""
 LIBMCRYPT_PATH="libmcrypt"
-LIBMCRYPT_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/libmcrypt-$LIBMCRYPT_VERSION.tar.gz"
+LIBMCRYPT_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/libmcrypt.tar.gz"
 
 SOURCE_PATH='www'
 
