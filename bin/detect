@@ -6,7 +6,7 @@
 #  echo "no" && exit 1
 #fi
 
-if [ -f $1/index.php ]; then
+if [ -f $1/index.php || -f $1/composer.json ]; then
   echo "Custom PHP" && exit 0
 else
   echo "no" && exit 1
