@@ -7,26 +7,23 @@ set -e
 # config
 APACHE_VERSION="2.2.23"
 APACHE_PATH="apache"
-APACHE_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/apache-$APACHE_VERSION.tar.gz"
-#APACHE_URL="https://s3.amazonaws.com/rbrainard-public/apache-$APACHE_VERSION.tar.gz"
-#APACHE_URL="https://dl.dropbox.com/u/13311057/apache.tar.gz"
-#APACHE_URL="http://dl.dropbox.com/u/62064441/apache.tar.gz"
-
+APACHE_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-apache-$APACHE_VERSION.tar.gz"
 
 PHP_VERSION="5.3.19"
 PHP_PATH="php"
-PHP_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/php-$PHP_VERSION.tar.gz"
-#PHP_URL="https://s3.amazonaws.com/rbrainard-public/php-$PHP_VERSION.tar.gz"
-#PHP_URL="https://dl.dropbox.com/u/13311057/php-$PHP_VERSION.tar.gz"
-#PHP_URL="http://dl.dropbox.com/u/62064441/php.tar.gz"
+PHP_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-php-$PHP_VERSION.tar.gz"
 
 PEAR_VERSION=""
 PEAR_PATH="pear"
 PEAR_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/pear.tar.gz"
 
-LIBMCRYPT_VERSION=""
+LIBMCRYPT_VERSION="2.5.8"
 LIBMCRYPT_PATH="libmcrypt"
-LIBMCRYPT_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/libmcrypt.tar.gz"
+LIBMCRYPT_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-libmcrypt-$LIBMCRYPT_VERSION.tar.gz"
+
+LIBMEMCACHED_VERSION="0.13"
+LIBMEMCACHED_PATH="libmemcached"
+LIBMEMCACHED_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-libmemcached-$LIBMCRYPT_VERSION.tar.gz"
 
 SOURCE_PATH='www'
 
@@ -58,6 +55,9 @@ curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 
 echo "-----> Bundling libmcrypt from GC AWS S3"
 curl --silent --max-time 60 --location "$LIBMCRYPT_URL" | tar xz
+
+echo "-----> Bundling libmemcached from GC AWS S3"
+curl --silent --max-time 60 --location "$LIBMEMCACHED_URL" | tar xz
 
 echo "-----> Bundling pear from GC AWS S3"
 curl --silent --max-time 60 --location "$PEAR_URL" | tar xz
