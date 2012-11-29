@@ -53,7 +53,7 @@ In order to create the packages used by the build pack, you must compile Apache,
     # (future option for 5.4 --with-vpx-dir=/usr/include )
     ~ $ curl -O https://dl.dropbox.com/u/13311057/php-5.3.19.tar.gz
     ~ $ tar -xzf php-5.3.19.tar.gz
-    ~ $ ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-mysqli --with-pdo-mysql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --enable-soap=shared --with-zlib --with-jpeg-dir=/usr/include --with-readline --enable-cli --enable-pcntl --with-mcrypt=/app/libmcrypt/lib --with-libmemcached-dir=/app/libmemcached/lib --enable-static=yes --with-openssl
+    ~ $ ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-mysqli --with-pdo-mysql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --with-zlib --with-jpeg-dir=/usr/include --with-readline --enable-cli --enable-pcntl --with-mcrypt=/app/libmcrypt --with-memcached-dir=/app/libmemcached --enable-static=yes --with-openssl
     ~ $ make
     ~ $ make install
     ~ $ cd ..
