@@ -23,7 +23,7 @@ LIBMCRYPT_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-li
 
 LIBMEMCACHED_VERSION="0.13"
 LIBMEMCACHED_PATH="libmemcached"
-LIBMEMCACHED_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-libmemcached-$LIBMCRYPT_VERSION.tar.gz"
+LIBMEMCACHED_URL="http://files.gamecircus.net.s3.amazonaws.com/heroku-builds/hpm-libmemcached-$LIBMEMCACHED_VERSION.tar.gz"
 
 SOURCE_PATH='www'
 
